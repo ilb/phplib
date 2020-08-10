@@ -407,6 +407,14 @@ class HTTP_Request2Xml {
         }
         return $result;
     }
+    /**
+     * магический метод для симуляции "интерфейсных" методов getXxx()
+     * @param type $property
+     * @return type
+     */
+    public function __get($property) {
+        return $this->getVar("_default_ns:" . $property);
+    }
 
     /**
      * Получить значение элемента по XPath-запросу. Запрос должен выбирать уникальный элемент - не набор узлов.

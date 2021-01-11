@@ -58,11 +58,11 @@ class Config_Resources {
             trigger_error("file not exists '" . $envFile . "'", E_USER_ERROR);
         }
         $envFile = $testFile;
-
         //ищем пользовательский файл контекста
         if (array_key_exists(self::unixHome, $_SERVER)) { //unix
             $testFile = $_SERVER[self::unixHome] . DIRECTORY_SEPARATOR . self::contextDir . DIRECTORY_SEPARATOR . self::contextFile;
             $userCtxFile = realpath($testFile);
+            //trigger_error($userCtxFile);
         } else if (array_key_exists(self::winHome, $_SERVER)) { //windows
             $testFile = $_SERVER[self::winHome] . DIRECTORY_SEPARATOR . self::contextDir . DIRECTORY_SEPARATOR . self::contextFile;
             $userCtxFile = realpath($testFile);
@@ -81,7 +81,7 @@ class Config_Resources {
                 $contextFile = $contextFile2;
             }
         }
-
+	trigger_error($contextFile);
         //файл кеша - один на наборконфигфайлов-пользователя (конфиги соответвенно разные в разных приложениях)
         $cacheFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . "Config_Resources_" . md5($envFile . $contextFile . $userCtxFile) . "_" . (getenv("USERNAME") ? getenv("USERNAME") : posix_getuid());
 
@@ -345,10 +345,11 @@ class Config_Resources {
 
         //заполняем значения глобалей
         //var_dump(__LINE__, $globenv);
-        if (count($globenv) > 0) { //если осталось что заполнять
+        //NB! disable LDAP on external phplib
+        if (false && count($globenv) > 0) { //если осталось что заполнять
             $ds = ldap_connect();
             ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
-
+            ldap_set_option($ds, LDAP_OPT_DEBUG_LEVEL, 7);
             if (file_exists($cacheFile)) {
                 $sr = ldap_read($ds, "cn=lastmod,c=ru", "(objectClass=lastmod)", array("modifyTimestamp"));
                 //сервер поддерживает ластмод - сравним время кеша с ним

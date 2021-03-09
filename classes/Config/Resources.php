@@ -81,7 +81,6 @@ class Config_Resources {
                 $contextFile = $contextFile2;
             }
         }
-	trigger_error($contextFile);
         //файл кеша - один на наборконфигфайлов-пользователя (конфиги соответвенно разные в разных приложениях)
         $cacheFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . "Config_Resources_" . md5($envFile . $contextFile . $userCtxFile) . "_" . (getenv("USERNAME") ? getenv("USERNAME") : posix_getuid());
 
